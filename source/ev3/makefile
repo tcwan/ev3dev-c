@@ -47,8 +47,6 @@ SKIP_PP = $(EV3)
 # -- skip preprocessing anywhere
 # SKIP_PP = 1
 
-SKIP_PP = 0
-
 ifeq ($(SKIP_PP),0)
 PP = python -u $(YUPP_HOME)/yup.py
 else
