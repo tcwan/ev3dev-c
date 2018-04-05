@@ -17,6 +17,8 @@
 #include "ev3.h"
 #include "ev3_port.h"
 
+#define PLATFORM_PORTPREFIX "ev3-ports:"
+
 #define PATH_PREF_LEN  25
 #define DESC_SPOT  "///"
 
@@ -377,6 +379,11 @@ void ev3_parse_port_name( char *name, uint8_t *port, uint8_t *extport, uint8_t *
 	*extport = EXT_PORT__NONE_;
 	*addr = 0;
 
+	// ev3dev Stretch distro adds a platform prefix to the address
+	char *platform_prefix = strchr(name, ':');
+	if (platform_prefix)
+		name = platform_prefix + 1;
+
 	if ( strncmp( name, "in", IN_PREF_LEN ) == 0 ) {
 		/* "in" */
 		name += IN_PREF_LEN;
@@ -446,6 +453,9 @@ void ev3_parse_port_name( char *name, uint8_t *port, uint8_t *extport, uint8_t *
 char *ev3_port_name( uint8_t port, uint8_t extport, uint8_t addr, char *buf )
 {
 	char *p = buf;
+
+	// ev3dev Stretch distro adds a platform prefix to the address
+	p = stpcpy(p, PLATFORM_PORTPREFIX);
 
 	if (( port >= INPUT_1 ) && ( port <= INPUT_4 )) {
 		memcpy( p, "in", IN_PREF_LEN );
