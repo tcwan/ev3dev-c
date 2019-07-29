@@ -1,4 +1,4 @@
-MAKEFILE_BASE = ../Makefile
+TARGET = $(notdir $(CURDIR))
 
 .PHONY: default clean clean-binary debug debug-clean debug-clean-binary release release-clean
 
@@ -6,7 +6,19 @@ default: debug
 
 clean: debug-clean-binary
 
-clean-binary: debug-clean-binary
+ifeq ($(OS),Windows_NT)
+CC = gcc
+CXX = g++
+define remove
+	cmd /c del /f $(subst /,\,$1)
+endef
+else
+CC = arm-linux-gnueabi-gcc
+CXX = arm-linux-gnueabi-g++
+define remove
+	rm -f
+endef
+endif
 
 clean-all: debug-clean
 
@@ -22,5 +34,14 @@ debug-clean-binary:
 release:
 	$(MAKE) -f $(MAKEFILE_BASE).Release
 
-release-clean:
-	$(MAKE) -f $(MAKEFILE_BASE).Release clean
+$(CXX_OBJS): $(D_BIN)/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+.PRECIOUS: $(F_BIN) $(C_OBJS) $(CXX_OBJS)
+
+$(F_BIN): $(C_OBJS) $(CXX_OBJS)
+	$(CXX) $(C_OBJS) $(CXX_OBJS) -Wall $(LIBS) -o $@
+
+clean:
+	-$(call remove,$(D_BIN)/*.o)
+	-$(call remove,$(F_BIN))

@@ -1,44 +1,18 @@
-#Top level makefile
-#DIRS=source/ev3 \
-#	eg/dc \
-#	eg/drive \
-#	eg/hello \
-#	eg/io \
-#	eg/light \
-#	eg/port \
-#	eg/poweroff \
-#	eg/rcx_led \
-#	eg/remote \
-#	eg/sensor \
-#	eg/servo \
-#	eg/tacho \
-##	eg/tacho_cpp
+LIB := source/ev3
+EXAMPLES := $(wildcard eg/*/.)
 
-DIRS=source/ev3 eg/*/
+.PHONY: default all clean build-lib $(LIB) $(EXAMPLES)
 
-all::
-	@for i in ${DIRS}; \
-	do \
-	make -C $${i}; \
-	done
+default: all
 
-clean::
-	@for i in ${DIRS}; \
-	do \
-	make -C $${i} clean; \
-	done
-	
-lib::
-	make -C source/ev3 SKIP_PP=0
+all: build-lib $(EXAMPLES)
 
-shared-lib::
-	make -C source/ev3 SKIP_PP=0 shared
-	
-install-lib::
-	make -C source/ev3 install
-	
-install-shared-lib::
-	make -C source/ev3 shared-install
-	
-eg/*::
-	make -C $@;
+clean: $(LIB) $(EXAMPLES)
+
+build-lib: $(LIB)
+	$(MAKE) -C $(LIB) install
+	$(MAKE) -C $(LIB) shared
+	$(MAKE) -C $(LIB) shared-install
+
+$(LIB) $(EXAMPLES):
+	$(MAKE) -C $@ $(MAKECMDGOALS)
