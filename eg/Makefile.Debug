@@ -31,7 +31,7 @@ CC = gcc
 CXX = g++
 endif
 
-LINK = $(CC)
+LINK = $(CXX)
 
 # -- build on EV3 BRICK
 ifeq ($(PLATFORM),__UNIX__)
@@ -55,6 +55,9 @@ PP = python -u $(YUPP_HOME)/yup.py
 else
 PP = @echo makefile: warning: preprocessing step is skipped,
 endif
+
+# -- command to create directories
+MKDIR = mkdir -p
 
 # -- output subdirectory
 ifeq ($(PLATFORM),__MINGW__)
@@ -136,9 +139,9 @@ endif
 PPFLAGS = -q --pp-browse $(addprefix -d, $(D_YU))
 
 # -- compiler flags
-CFLAGS = $(addprefix -I, $(D_H)) -O2 -std=gnu99 -W -Wall -Wno-comment
-CXXFLAGS = $(addprefix -I, $(D_H)) -O2 -g -W -Wall -Wno-comment
-ASMFLAGS = -Wall
+CFLAGS = $(addprefix -I, $(D_H)) -O2 -std=gnu99 -W -Wall -Wno-comment -g
+CXXFLAGS = $(addprefix -I, $(D_H)) -O2 -W -Wall -Wno-comment -g
+ASMFLAGS = -Wall -g
 
 # ---------------------------------
 #   files lists
@@ -228,7 +231,7 @@ vpath %$(E_YUC) $(D_C)
 # -- build binary file
 .PHONY: default
 
-default: $(F_BIN)
+default: bindirs $(F_BIN)
 
 $(F_BIN): $(O)
 	$(call wrap,$(LINK),$^ -o $@ $(LIBS) $(LFLAGS))
@@ -256,6 +259,15 @@ $(O_CXX): $(D_OBJ)/%$(E_OBJ): %$(E_CXX)
 
 $(O_ASM): $(D_OBJ)/%$(E_OBJ): %$(E_ASM)
 	$(call wrap,$(CC),$(ASMFLAGS) -c $< -o $@)
+
+# -- create 'object' and 'bin' directories
+bindirs: $(D_OBJ) $(D_BIN)
+
+$(D_OBJ):
+	${MKDIR} ${D_OBJ}
+
+$(D_BIN):
+	${MKDIR} ${D_BIN}
 
 # -- remove temporary files
 .PHONY: clean

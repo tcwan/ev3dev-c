@@ -7,7 +7,10 @@ referring to the ev3dev cross-compiler image but also installs _"swig3.0"_
 and _"python-dev"_ packages:
 
     cd /PATH/TO/ev3dev-c/docker/
-    docker build --rm -t ev3cc .
+    docker build --rm -t ev3cc -f <dockerfile> .
+
+where `<dockerfile>` is the path to one of the Docker configuration files in the Dockerfiles subfolder, e.g.:
+     Dockerfiles/debian-jessie-armel-cross-pydev.dockerfile
 
 Once **ev3cc** image is built, you can compile the library, examples and your
 programs using Docker. First, run a new Docker container, for example:

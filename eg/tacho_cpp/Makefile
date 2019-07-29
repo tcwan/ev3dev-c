@@ -1,16 +1,10 @@
 TARGET = $(notdir $(CURDIR))
 
-LIBS = -lm -lev3dev-c
-D_BIN = Release
+.PHONY: default clean clean-binary debug debug-clean debug-clean-binary release release-clean
 
-ifeq ($(OS),Windows_NT)
-LIBS := $(LIBS) -lws2_32 -Wl,-rpath=../../lib/mingw -L../../lib/mingw
-D_BIN := $(D_BIN)/mingw
-endif
+default: debug
 
-D_H = ../../source/ev3
-CFLAGS = $(addprefix -I, $(D_H)) -O2 -std=gnu99 -W -Wall -Wno-comment
-CXXFLAGS = $(addprefix -I, $(D_H)) -O2 -g -W -Wall -Wno-comment
+clean: debug-clean-binary
 
 ifeq ($(OS),Windows_NT)
 CC = gcc
@@ -26,23 +20,19 @@ define remove
 endef
 endif
 
-ifeq ($(OS),Windows_NT)
-E_BIN = .exe
-else
-E_BIN =
-endif
-F_BIN = $(D_BIN)/$(TARGET)$(E_BIN)
+clean-all: debug-clean
 
-C_OBJS = $(addprefix $(D_BIN)/, $(patsubst %.c, %.o, $(wildcard *.c)))
-CXX_OBJS = $(addprefix $(D_BIN)/, $(patsubst %.cpp, %.o, $(wildcard *.cpp)))
+debug:
+	$(MAKE) -f $(MAKEFILE_BASE).Debug
 
-.PHONY: default all clean
+debug-clean:
+	$(MAKE) -f $(MAKEFILE_BASE).Debug clean
 
-default: $(F_BIN)
-all: default
+debug-clean-binary:
+	$(MAKE) -f $(MAKEFILE_BASE).Debug clean-binary
 
-$(C_OBJS): $(D_BIN)/%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+release:
+	$(MAKE) -f $(MAKEFILE_BASE).Release
 
 $(CXX_OBJS): $(D_BIN)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -55,4 +45,3 @@ $(F_BIN): $(C_OBJS) $(CXX_OBJS)
 clean:
 	-$(call remove,$(D_BIN)/*.o)
 	-$(call remove,$(F_BIN))
-
