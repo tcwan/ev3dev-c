@@ -1,3 +1,5 @@
+MAKEFILE_BASE = ../Makefile
+
 TARGET = $(notdir $(CURDIR))
 
 .PHONY: default clean clean-binary debug debug-clean debug-clean-binary release release-clean
