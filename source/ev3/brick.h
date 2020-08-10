@@ -343,8 +343,7 @@ extern char *sensor_get_text_value( POOL_T sock, char *buf, size_t sz );
  *  \brief Get value of "value" attribute of the sensor.
  *  \param inx Attribute index.
  *  \param sock Socket.
- *  \param[out] buf Buffer for result.
- *  \param sz Buffer size.
+ *  \param defval Default value.
  *  \return Requested value.
  */
 extern int sensor_get_value( uint8_t inx, POOL_T sock, int defval );
