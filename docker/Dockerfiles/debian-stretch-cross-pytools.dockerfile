@@ -1,8 +1,5 @@
-FROM ev3dev/debian-stretch-cross
+FROM ev3dev/debian-stretch-cross:latest
 
-# Install python tools needed for cross builds
-RUN sudo apt-get update && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get install --yes --no-install-recommends \
-        python \
-        scons && \
-    sudo rm -rf /var/lib/apt/lists/*
+RUN sudo apt-get update
+RUN sudo apt-get install -y swig3.0 python-dev scons
+RUN sudo rm -rf /var/lib/apt/lists/*
